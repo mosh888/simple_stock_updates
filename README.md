@@ -1,8 +1,8 @@
 Features:
 
 Retrieves real-time stock prices.
-Displays price, price change, and percentage change for each ticker.
-Updates every 5 minutes.
+Displays price, price change, percentage change, and volumes for each ticker.
+Updates every 60 seconds.
 
 Prerequisites:
 
