@@ -32,7 +32,7 @@ def get_stock_updates(tickers):
             
             # Adding signs for change and percentage change
             change_str = f"{change:+.2f}"
-            percentage_change_str = f"{percentage_change:+.2f}"
+            percentage_change_str = f"{percentage_change:+.2f}%"
             
             # Print the values with the selected color
             print(f"{ticker:<10}{color}{price:<12.2f}{change_str:<12}{percentage_change_str:<12}{volume:,}{RESET}")
