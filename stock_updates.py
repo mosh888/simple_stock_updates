@@ -3,7 +3,7 @@ import time
 from datetime import datetime
 
 # List of stock tickers including ^NDX
-tickers = ['NQ=F','IUKD.L', '^FTSE', '^VIX', 'BTC-USD', 'GME', 'TSLA']
+tickers = ['NQ=F','IUKD.L', '^FTSE', '^VIX', 'BTC-USD', 'TSLA']
 # tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', '^NDX']
 
 # Mapping of tickers to their names
@@ -13,7 +13,6 @@ ticker_names = {
     '^FTSE': 'FTSE 100',
     '^VIX': 'Vix Index',
     'BTC-USD': 'Bitcoin',
-    'GME': 'Gamestop',
     'TSLA': 'Tesla'
 }
 
