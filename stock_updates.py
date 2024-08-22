@@ -3,8 +3,19 @@ import time
 from datetime import datetime
 
 # List of stock tickers including ^NDX
-tickers = ['NQ=F', 'BTC-USD', 'GOOGL', 'TSLA']
+tickers = ['NQ=F','IUKD.L', '^FTSE', '^VIX', 'BTC-USD', 'GME', 'TSLA']
 # tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', '^NDX']
+
+# Mapping of tickers to their names
+ticker_names = {
+    'NQ=F': 'Nasdaq',
+    'IUKD.L': 'UK Dividend',
+    '^FTSE': 'FTSE 100',
+    '^VIX': 'Vix Index',
+    'BTC-USD': 'Bitcoin',
+    'GME': 'Gamestop',
+    'TSLA': 'Tesla'
+}
 
 # ANSI escape codes for coloring
 RED = '\033[91m'
@@ -12,7 +23,7 @@ GREEN = '\033[92m'
 RESET = '\033[0m'
 
 def get_stock_updates(tickers):
-    print(f"\n{'Ticker':<10}{'Price':<12}{'Change':<12}{'% Change':<12}{'Volume':<20}")
+    print(f"\n{'Name':<15}{'Price':<12}{'Change':<12}{'% Change':<12}{'Volume':<20}")
     print('-' * 70)
     for ticker in tickers:
         try:
@@ -40,11 +51,12 @@ def get_stock_updates(tickers):
                     percentage_change_str = f"{percentage_change:+.2f}%"
                     
                     # Print the values with the selected color
-                    print(f"{ticker:<10}{color}{price:<12.2f}{change_str:<12}{percentage_change_str:<12}{volume:,}{RESET}")
+                    name = ticker_names.get(ticker, ticker)  # Get the name or fallback to the ticker
+                    print(f"{name:<15}{color}{price:<12.2f}{change_str:<12}{percentage_change_str:<12}{volume:,}{RESET}")
                 else:
-                    print(f"{ticker:<10}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}")
+                    print(f"{name:<15}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}")
             else:
-                print(f"{ticker:<10}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}")
+                print(f"{name:<15}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}")
         
         except KeyError as e:
             print(f"KeyError for {ticker}: {e}")
@@ -58,4 +70,4 @@ def get_stock_updates(tickers):
 
 while True:
     get_stock_updates(tickers)
-    time.sleep(60)  # Wait time in seconds
+    time.sleep(300)  # Wait time in seconds
