@@ -1,20 +1,12 @@
 import yfinance as yf
 import time
 from datetime import datetime
+import pandas as pd
+import pandas_ta as ta
 
 # List of stock tickers including ^NDX
-tickers = ['NQ=F','IUKD.L', '^FTSE', '^VIX', 'BTC-USD', 'TSLA']
+tickers = ['NQ=F', 'ES=F', '^FTSE', 'GOOGL', 'BTC-USD', 'GOOGL', 'TSLA']
 # tickers = ['AAPL', 'GOOGL', 'MSFT', 'AMZN', 'TSLA', '^NDX']
-
-# Mapping of tickers to their names
-ticker_names = {
-    'NQ=F': 'Nasdaq',
-    'IUKD.L': 'UK Dividend',
-    '^FTSE': 'FTSE 100',
-    '^VIX': 'Vix Index',
-    'BTC-USD': 'Bitcoin',
-    'TSLA': 'Tesla'
-}
 
 # ANSI escape codes for coloring
 RED = '\033[91m'
@@ -22,13 +14,13 @@ GREEN = '\033[92m'
 RESET = '\033[0m'
 
 def get_stock_updates(tickers):
-    print(f"\n{'Name':<15}{'Price':<12}{'Change':<12}{'% Change':<12}{'Volume':<20}")
-    print('-' * 70)
+    print(f"\n{'Ticker':<10}{'Price':<12}{'Change':<12}{'% Change':<12}{'Volume':<20}{'MA10':<10}{'MA50':<10}{'RSI':<10}")
+    print('-' * 110)
     for ticker in tickers:
         try:
             stock = yf.Ticker(ticker)
             hist = stock.history(period='1d', interval='1m')
-            
+
             if not hist.empty:
                 current_data = hist['Close'].iloc[-1]
                 
@@ -38,8 +30,18 @@ def get_stock_updates(tickers):
                 if previous_close is not None:
                     volume = int(hist['Volume'].sum())  # Total volume for the day
                     
-                    price = current_data
-                    change = current_data - previous_close
+                    # Calculate technical indicators
+                    ma10 = ta.sma(hist['Close'], length=10).iloc[-1]  # 10-period MA
+                    ma50 = ta.sma(hist['Close'], length=50).iloc[-1]  # 50-period MA
+                    rsi = ta.rsi(hist['Close'], length=14).iloc[-1]   # 14-period RSI
+                    
+                    # Handle cases where MA or RSI cannot be calculated due to insufficient data
+                    ma10 = f"{ma10:.2f}" if not pd.isna(ma10) else "N/A"
+                    ma50 = f"{ma50:.2f}" if not pd.isna(ma50) else "N/A"
+                    rsi = f"{rsi:.2f}" if not pd.isna(rsi) else "N/A"
+                    
+                    price = round(current_data, 2)
+                    change = round(current_data - previous_close, 2)
                     percentage_change = round((change / previous_close) * 100, 2)  # Round to 2 decimal places
                     
                     # Determine color based on the change value
@@ -50,12 +52,11 @@ def get_stock_updates(tickers):
                     percentage_change_str = f"{percentage_change:+.2f}%"
                     
                     # Print the values with the selected color
-                    name = ticker_names.get(ticker, ticker)  # Get the name or fallback to the ticker
-                    print(f"{name:<15}{color}{price:<12.2f}{change_str:<12}{percentage_change_str:<12}{volume:,}{RESET}")
+                    print(f"{ticker:<10}{color}{price:<12.2f}{change_str:<12}{percentage_change_str:<12}{volume:<20,}{RESET}{ma10:<10}{ma50:<10}{rsi:<10}")
                 else:
-                    print(f"{name:<15}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}")
+                    print(f"{ticker:<10}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}{'N/A':<10}{'N/A':<10}{'N/A':<10}")
             else:
-                print(f"{name:<15}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}")
+                print(f"{ticker:<10}{'No data':<12}{'No data':<12}{'No data':<12}{'No data':<20}{'N/A':<10}{'N/A':<10}{'N/A':<10}")
         
         except KeyError as e:
             print(f"KeyError for {ticker}: {e}")
@@ -65,7 +66,7 @@ def get_stock_updates(tickers):
     # Print the current time
     current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S %p')
     print(f"\nLast updated: {current_time}")
-    print('-' * 70)
+    print('-' * 110)
 
 while True:
     get_stock_updates(tickers)
